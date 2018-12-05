@@ -1416,10 +1416,11 @@ const Path = require('path');
            */
           prepareMetadataRequest(data) {
             const req = [];
+            const that = this;
             data.forEach(function (d) {
               req.push({
-                key: this.getDeviceKey(d),
-                domain: this.primaryDomain
+                key: that.getDeviceKey(d),
+                domain: that.primaryDomain
               });
             });
             return req;

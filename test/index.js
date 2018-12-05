@@ -11,9 +11,49 @@ describe('Test Jets Data Utils', () => {
         assert.isFalse(utils.isEmpty([0, 1, 2]));
     });
 
-    it('digitalTwinContext test', () => {
-        const dtCtx = utils.digitalTwinContext({}, []);
-        assert.throws(() => dtCtx.digitalTwinClass('pkg1', 'class1'), /doesn't exist in the context/);
+    describe('digitalTwinContext', () => {
+        const models = {
+            "{thingswise.com/example}World": {
+                "key": "world",
+                "primary_domain": {
+                    "mangled_name": "thingswise_com__example___World__Primary",
+                    "fields": {}
+                },
+                "secondary_domains": {},
+                "operational_domains": {},
+                "level": 0
+            }
+        };
+        const streams = [];
+        const dtCtx = utils.digitalTwinContext(streams, models);
+
+        it('should throw error for non-existing model', () => {
+            assert.throws(() => dtCtx.digitalTwinClass('pkg1', 'class1'), /doesn't exist in the context/);
+        });
+
+        it("shouldn't throw error for exising model", () => {
+            dtCtx.digitalTwinClass('thingswise.com/example', 'World');
+        });
+
+        const worldClass = dtCtx.digitalTwinClass('thingswise.com/example', 'World');
+
+        it('addEntryPoint should add entry to streams', () => {
+            worldClass.addEntryPoint({}, "input1", "key1");
+            assert(streams.length === 1);
+        });
+
+        it('getDeviceKey should return key field value', () => {
+            assert(worldClass.getDeviceKey({ 'world': 'world1' }) === 'world1');
+        });
+
+        it('getScope should return null for World class', () => {
+           assert.isNull(worldClass.getScope());
+        });
+
+        it('prepareMetadataRequest should return request with key field value', () => {
+            const request = worldClass.prepareMetadataRequest([{ 'world': 'world1' }]);
+            assert(request[0].key === 'world1');
+        });
     });
 
     it('isArray test', () => {
