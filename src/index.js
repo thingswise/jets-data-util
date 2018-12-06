@@ -1101,7 +1101,6 @@ const Path = require('path');
     }
 
     function addJsonPathMap(sf, f, i) {
-      sourceMap = [];
       if (isEmpty(sf.jsonField)) {
       } else {
         sf.jsonField = sf.jsonField.toString().trim();
