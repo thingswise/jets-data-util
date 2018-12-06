@@ -103,7 +103,7 @@ const Path = require('path');
 
   function extractBracketedContent(field) {
     const result = field.match(/^((?:[^\[]*)+)(?:\[(.*?)\])?$/);
-    fields = [];
+    const fields = [];
     if (result == null || result[0] !== field || result[1] === '') {
       throw (`invalid json field string in ${field}`);
     }
@@ -363,7 +363,7 @@ const Path = require('path');
     try {
       obj = JSON.parse(data);
     } catch (ex) {
-      v = `failed to parse ${data} error=${ex.stack ? ex.stack : ex}`;
+      const v = `failed to parse ${data} error=${ex.stack ? ex.stack : ex}`;
     }
     return obj;
   };
@@ -612,7 +612,7 @@ const Path = require('path');
   }
 
   function requiredPattern(pattern, flag) {
-    if (!isNoU(pattern) && !isString(field)) return `[TW.ERROR]: DataStage requiredPattern() configuration error: invalid first arguement, ${pattern}, expecting a regex string`;
+    if (!isNoU(pattern) && !isString(pattern)) return `[TW.ERROR]: DataStage requiredPattern() configuration error: invalid first arguement, ${pattern}, expecting a regex string`;
     if (!isNoU(flag) || !isString(flag)) return `[TW.ERROR]: DataStage requiredPattern() configuration error: invalid second arguement, ${pattern}, expecting a regex flag e.g. "i" or "g""`;
     const regex = new RegExp(pattern, flag);
     return function (v) { return regex.test(v) ? v : null; };
@@ -978,8 +978,8 @@ const Path = require('path');
   }
 
   function readInt64LE(buffer, offset) {
-    const high = buffer.readUInt32LE(offset + 4);
-    if (high < 0) hight += 4294967296;
+    let high = buffer.readUInt32LE(offset + 4);
+    if (high < 0) high += 4294967296;
     return high * 4294967296.0 + buffer.readUInt32LE(offset);
   }
 
@@ -1204,7 +1204,7 @@ const Path = require('path');
             if (isNaN(sf.fixedLen) || sf.fixedLen < 0 || sf.fixedLen > 1024) {
               throw (`invalid source field specs: invalid field length, ${sf.fixedLen} in entry ${i} expecting empty or a positive integer not greater than 1024`);
             } else {
-              sf.fixedLen = Number(fixedLen);
+              sf.fixedLen = Number(sf.fixedLen);
             }
           } else {
             sf.fixedLen = null;
@@ -1240,7 +1240,7 @@ const Path = require('path');
             if (isNaN(sf.fixedLen) || sf.fixedLen < 0 || sf.fixedLen > 1024) {
               throw (`invalid source field specs: invalid field length, ${sf.fixedLen} in entry ${i} expecting empty or a positive integer not greater than 1024`);
             } else {
-              sf.fixedLen = Number(fixedLen);
+              sf.fixedLen = Number(sf.fixedLen);
             }
           } else {
             sf.fixedLen = null;
@@ -1279,7 +1279,7 @@ const Path = require('path');
           addPolicy(sf, f, i, 'missing or invalid timestamp');
           break;
         case 'REGEX':
-          addFn(requirePattern(sf.regex), f, i, `not matching pattern of ${sf.regex}`);
+          addFn(requiredPattern(sf.regex), f, i, `not matching pattern of ${sf.regex}`);
         default:
           if (dataType === 'binary') {
             throw (`[TW.ERROR]: invalid source field specs: empty type, ${sf.type} in entry ${i} expecting one of [${dataTypes.join(', ')}] for binary data`);
@@ -1317,7 +1317,7 @@ const Path = require('path');
       specs = readXlsxToJSON(Path.join(getCallerModulePath(), xlsxspecs));
     }
     if (isEmpty(specs)) {
-      return (`[TW.ERROR]: Empty XLSX specs from: ${xlsxpecs}`);
+      return (`[TW.ERROR]: Empty XLSX specs from: ${xlsxspecs}`);
     }
 
     try {
