@@ -1502,6 +1502,7 @@ const Path = require('path');
     parseSingleQuotedCSV,
     parseSpaceOrTabSeparatedValues,
     parseCharSeparatedValues,
+    processFieldSpecs,
     routeToErrorStage,
     toErrorDumpFormat,
     fieldSpecsForCSVFromXLSX,

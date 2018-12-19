@@ -52,4 +52,21 @@ describe('Test Jets Data Utils', () => {
         it('should return false for an object', () => { assert.isFalse(utils.isArray({})) });
         it('should return false for a string', () => { assert.isFalse(utils.isArray('')) });
     });
+
+    describe('processFieldSpecs', () => {
+        it('should return field specs', () => {
+            const specs = utils.processFieldSpecs([{
+                "name": "InletPressure",
+                "desc": " 进口压力",
+                "unit": "(MPa)",
+                "type": " UINT",
+                "min": 0,
+                "max": 100,
+                "lower": -0.01,
+                "policy": "drop-field",
+                "jsonField": "values[\"0\"]"
+            }], "+0800", 5000, 5000, 'error-message-dump', 'CSV');
+            assert.isNotEmpty(specs);
+        })
+    });
 });
