@@ -1408,21 +1408,29 @@ const Path = require('path');
           /*
            * Mangled primary domain name.
            */
-          primaryDomain: model.primary_domain ? model.primary_domain.mangled_name : null,
+          primaryDomain(name) {
+              if (name in model.primary_domains) {
+                  return model.primary_domains[name].mangled_name;
+              }
+              return null;
+          },
           /*
            * PrepareMetadataRequest will get `deviceId` from the input
            * tuples (per the Device DT model) and prepare DT request.
            */
-          prepareMetadataRequest(data) {
-            const req = [];
-            const that = this;
-            data.forEach(function (d) {
-              req.push({
-                key: that.getDeviceKey(d),
-                domain: that.primaryDomain
+          prepareMetadataRequest(data, primary_domain) {
+              const req = [];
+              const that = this;
+              const scope = that.getScope();
+              data.forEach(function (d) {
+                  req.push({
+                      key: that.getDeviceKey(d),
+                      domain: that.primaryDomain(primary_domain),
+                      scope: scope != null ? scope.getDeviceKey(d) : null,
+                      data: d
+                  });
               });
-            });
-            return req;
+              return req;
           },
           analyticsService: {
             name: 'metricUpdate',

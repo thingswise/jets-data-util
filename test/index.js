@@ -15,9 +15,11 @@ describe('Test Jets Data Utils', () => {
         const models = {
             "{thingswise.com/example}World": {
                 "key": "world",
-                "primary_domain": {
-                    "mangled_name": "thingswise_com__example___World__Primary",
-                    "fields": {}
+                "primary_domains": {
+                    "Primary": {
+                        "mangled_name": "thingswise_com__example___World__Primary",
+                        "fields": {}
+                    }
                 },
                 "secondary_domains": {},
                 "operational_domains": {},
@@ -42,7 +44,7 @@ describe('Test Jets Data Utils', () => {
             assert.isNull(worldClass.getScope())
         });
         it('prepareMetadataRequest should return request with key field value', () => {
-            const request = worldClass.prepareMetadataRequest([{ 'world': 'world1' }]);
+            const request = worldClass.prepareMetadataRequest([{ 'world': 'world1' }], "Primary");
             assert(request[0].key === 'world1');
         });
     });
@@ -59,7 +61,7 @@ describe('Test Jets Data Utils', () => {
                 "name": "InletPressure",
                 "desc": " 进口压力",
                 "unit": "(MPa)",
-                "type": " UINT",
+                "type": "UINT",
                 "min": 0,
                 "max": 100,
                 "lower": -0.01,
@@ -67,6 +69,25 @@ describe('Test Jets Data Utils', () => {
                 "jsonField": "values[\"0\"]"
             }], "+0800", 5000, 5000, 'error-message-dump', 'CSV');
             assert.isNotEmpty(specs);
-        })
+        });
+        it('should return field specs #2', () => {
+            const specs = utils.processFieldSpecs([{
+                "name": "PurchasePrice.medium_pressure_steam",
+                "type": "REAL",
+                "desc": "Medium pressure steam",
+                "unit": "\u00a5/t",
+                "decimals": 3,
+                "jsonField": "PurchasePrice.medium_pressure_steam"
+            }], "+0800", 5000, 5000, 'error-message-dump', 'JSON');
+            assert.isNotEmpty(specs);
+        });
+        it('should return field specs #3', () => {
+            const specs = utils.processFieldSpecs([{
+                "name": "country",
+                "type": "STRING",
+                "jsonField": "country"
+            }], "+0800", 5000, 5000, 'error-message-dump', 'JSON');
+            assert.isNotEmpty(specs);
+        });
     });
 });
