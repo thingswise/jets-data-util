@@ -1406,31 +1406,26 @@ const Path = require('path');
           },
           metadataStore: 'digitalTwinService',
           /*
-           * Mangled primary domain name.
+           * PrepareMetadataRequest returns function which prepares metadata request: it will get `deviceId` from
+           * the input tuples (per the Device DT model) and prepare DT request.
+           * @param domain mangled domain name
+           * @return
            */
-          primaryDomain(name) {
-              if (name in model.primary_domains) {
-                  return model.primary_domains[name].mangled_name;
-              }
-              return null;
-          },
-          /*
-           * PrepareMetadataRequest will get `deviceId` from the input
-           * tuples (per the Device DT model) and prepare DT request.
-           */
-          prepareMetadataRequest(data, primary_domain) {
-              const req = [];
+          prepareMetadataRequest(domain_mangled_name) {
               const that = this;
               const scope = that.getScope();
-              data.forEach(function (d) {
-                  req.push({
-                      key: that.getDeviceKey(d),
-                      domain: that.primaryDomain(primary_domain),
-                      scope: scope != null ? scope.getDeviceKey(d) : null,
-                      data: d
+              return function(data) {
+                  const req = [];
+                  data[0].forEach(function (d) {
+                      req.push({
+                          key: that.getDeviceKey(d),
+                          domain: domain_mangled_name,
+                          scope: scope != null ? scope.getDeviceKey(d) : null,
+                          data: d
+                      });
                   });
-              });
-              return req;
+                  return req;
+              };
           },
           analyticsService: {
             name: 'metricUpdate',
