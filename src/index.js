@@ -374,7 +374,7 @@ const Path = require('path');
     return function (v) {
       if (v != null) {
         if (isNaN(v)) {
-          v = v.replace(/[',"]/g, '');
+          v = String(v).replace(/[',"]/g, '');
           v = isNaN(v) ? null : +v;
         }
         if (v != null) {
@@ -479,7 +479,7 @@ const Path = require('path');
   function checkNumber(v, decimal) {
     if (v != null) {
       if (isNaN(v)) {
-        v = v.replace(/[',"]/g, '');
+        v = String(v).replace(/[',"]/g, '');
         v = isNaN(v) ? null : +v;
       }
       if (v != null) {
