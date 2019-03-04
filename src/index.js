@@ -478,6 +478,9 @@ const Path = require('path');
 
   function checkNumber(v, decimal) {
     if (v != null) {
+      if (String(v) === "") {
+        v = null;
+      } else
       if (isNaN(v)) {
         v = String(v).replace(/[',"]/g, '');
         v = isNaN(v) ? null : +v;
