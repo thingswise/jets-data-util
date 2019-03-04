@@ -482,11 +482,13 @@ const Path = require('path');
         v = String(v).replace(/[',"]/g, '');
         v = isNaN(v) ? null : +v;
       }
-      if (v != null) {
+      if (v != null && v !== '') {
         if (decimal != null) {
           v = Number(v).toFixed(decimal);
         }
         v = Number(v);
+      } else {
+        v = null;
       }
     }
     return v;
