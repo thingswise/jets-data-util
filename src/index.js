@@ -227,7 +227,7 @@ const Path = require('path');
 
   function cloneObject(object) {
     if (!isObject(object)) {
-      return obj;
+      return object;
     }
     return JSON.parse(JSON.stringify(object));
   }
