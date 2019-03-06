@@ -1431,7 +1431,8 @@ const Path = require('path');
             resource: 'metrics',
             method: 'POST',
             binding: 'metricUpdate'
-          }
+          },
+          modelKey: model.key
         };
       }
     };
