@@ -1432,7 +1432,7 @@ const Path = require('path');
             method: 'POST',
             binding: 'metricUpdate'
           },
-          modelKey: model.key
+          key: model.key
         };
       }
     };
