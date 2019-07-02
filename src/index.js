@@ -225,16 +225,11 @@ const Path = require('path');
     return o === void 0;
   }
 
-  function cloneObject(obj) {
-    if (obj === null || typeof obj !== 'object') {
-      return obj;
+  function cloneObject(object) {
+    if (!isObject(object)) {
+      return object;
     }
-
-    const temp = obj.constructor(); // give temp the original obj's constructor
-    for (const key in obj) {
-      temp[key] = cloneObject(obj[key]);
-    }
-    return temp;
+    return JSON.parse(JSON.stringify(object));
   }
 
   function isEmpty(value) {
@@ -1454,7 +1449,8 @@ const Path = require('path');
             resource: 'metrics',
             method: 'POST',
             binding: 'metricUpdate'
-          }
+          },
+          key: model.key
         };
       }
     };

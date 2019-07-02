@@ -44,7 +44,7 @@ describe('Test Jets Data Utils', () => {
             assert.isNull(worldClass.getScope())
         });
         it('prepareMetadataRequest should return request with key field value', () => {
-            const request = worldClass.prepareMetadataRequest([{ 'world': 'world1' }], "Primary");
+            const request = worldClass.prepareMetadataRequest("Primary")([[{ 'world': 'world1' }]]);
             assert(request[0].key === 'world1');
         });
     });
@@ -53,6 +53,25 @@ describe('Test Jets Data Utils', () => {
         it('should return true for an array', () => { assert.isTrue(utils.isArray([0, 1])) });
         it('should return false for an object', () => { assert.isFalse(utils.isArray({})) });
         it('should return false for a string', () => { assert.isFalse(utils.isArray('')) });
+    });
+
+    describe('requiredNumber', () => {
+        it('should return null for empty string', () => {
+           var numberFunc = utils.requiredNumber(null);
+           assert.isNull(numberFunc(''));
+        });
+        it('should return number for string value', () => {
+            var numberFunc = utils.requiredNumber(null);
+            assert.equal(numberFunc('0.123'), 0.123);
+        });
+        it('should return zero for zero float', () => {
+            var numberFunc = utils.requiredNumber(null);
+            assert.equal(numberFunc(0.0), 0.0);
+        });
+        it('should return zero for zero int', () => {
+            var numberFunc = utils.requiredNumber(null);
+            assert.equal(numberFunc(0), 0);
+        });
     });
 
     describe('processFieldSpecs', () => {
