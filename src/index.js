@@ -1375,18 +1375,36 @@ const Path = require('path');
            * @param stream_name stream name
            * @param keys access keys
            */
-          addEntryPoint(engine_config, stream_name, keys) {
+          addEntryPoint(engine_config, stream_name, keys, entry = null, protocol = 'HTTP', content_type='application/json') {
             if (streams.find(s => s.name === stream_name)) {
               throw Error(`stream with name '${stream_name}' is already defined`);
             }
-            streams.push({
-              name: stream_name,
-              state: 'enabled',
-              protocol: 'HTTP',
-              method: 'POST',
-              keys,
-              engine: engine_config
-            });
+            if (protocol == 'HTTP') {
+              streams.push({
+                name: stream_name,
+                state: 'enabled',
+                protocol: 'HTTP',
+                method: 'POST',
+                keys,
+                engine: engine_config,
+                entry: entry || stream_name
+              });            
+            } else
+            if (protocol == 'MQTT') {
+              streams.push({
+                name: stream_name,
+                state: 'enabled',
+                protocol: 'MQTT',
+                method: 'PUBLISH',
+                "content-type": content_type,
+                batchCount: 1,
+                keys,
+                engine: engine_config,
+                entry: entry || stream_name
+              });
+            } else {
+              throw Error(`Unsupported protocol ${protocol}`);
+            }
           },
           /*
            * Retrieves device key for specified data object according to 'key' fields specified in models configuration.
