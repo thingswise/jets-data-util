@@ -1397,6 +1397,19 @@ const Path = require('path');
                 engine: engine_config,
                 entry: entry || stream_name
               });
+            } else
+            if (protocol == 'MQTTS') {
+              streams.push({
+                name: stream_name,
+                state: 'enabled',
+                protocol: 'MQTTS',
+                method: 'PUBLISH',
+                "content-type": content_type,
+                batchCount: 1,
+                keys,
+                engine: engine_config,
+                entry: entry || stream_name
+              });
             } else {
               throw Error(`Unsupported protocol ${protocol}`);
             }
