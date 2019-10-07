@@ -713,7 +713,7 @@ const Path = require('path');
           if (isString(d[field])) {
             d[field] = JSON.parse(d[field]);
           }
-          logDebugMessage(context, "parseJSON output data: ", d);
+          logDebugMessage(context, "parseJSON output data: ", JSON.stringify(d));
           return d;
           /* see comment blow
                     d[field] = JSON.parse(d[field]);
@@ -725,14 +725,14 @@ const Path = require('path');
           if (isString(d[field])) {
             return JSON.parse(d[field]);
           }
-          logDebugMessage(context, "parseJSON output data: ", d);
+          logDebugMessage(context, "parseJSON output data: ", JSON.stringify(d));
           return d[field];
         }
         if (isString(d)) {
-          logDebugMessage(context, "parseJSON output data: ", d);
+          logDebugMessage(context, "parseJSON output data: ", JSON.stringify(d));
           return JSON.parse(d);
         }
-        logDebugMessage(context, "parseJSON output data: ", d);
+        logDebugMessage(context, "parseJSON output data: ", JSON.stringify(d));
         return d;
 
 
@@ -758,7 +758,7 @@ const Path = require('path');
       logDebugMessage(context, "parseCSV input data: ", JSON.stringify(d));
       context._lastSourceDataParseType = 'CSV';
       const result = d.split(regex);
-      logDebugMessage(context, "parseCSV output data: ", result);
+      logDebugMessage(context, "parseCSV output data: ", JSON.stringify(result));
       return result;
     };
   }
@@ -766,7 +766,7 @@ const Path = require('path');
   function parseStringArray() {
     return function (d, context) {
       logDebugMessage(context, "parseStringArray input data: ", JSON.stringify(d));
-      logDebugMessage(context, "parseStringArray output data: ", d);
+      logDebugMessage(context, "parseStringArray output data: ", JSON.stringify(d));
       return d;
     };
   }
@@ -784,7 +784,7 @@ const Path = require('path');
         }
         result.push(out[i].replace(/""/g, '"'));
       }
-      logDebugMessage(context, "parseEscapedDoubleQuotedCSV output data: ", result);
+      logDebugMessage(context, "parseEscapedDoubleQuotedCSV output data: ", JSON.stringify(result));
       return result;
     };
   }
@@ -795,7 +795,7 @@ const Path = require('path');
       logDebugMessage(context, "parseDoubleQuotedCSV input data: ", JSON.stringify(d));
       context._lastSourceDataParseType = 'CSV';
       const result = regexSplitWithCapture(d, regex);
-      logDebugMessage(context, "parseDoubleQuotedCSV output data: ", result);
+      logDebugMessage(context, "parseDoubleQuotedCSV output data: ", JSON.stringify(result));
       return result;
     };
   }
@@ -806,7 +806,7 @@ const Path = require('path');
       logDebugMessage(context, "parseDoubleQuotedCSV input data: ", JSON.stringify(d));
       context._lastSourceDataParseType = 'CSV';
       const result = regexSplitWithCapture1(d, regex);
-      logDebugMessage(context, "parseDoubleQuotedCSV output data: ", result);
+      logDebugMessage(context, "parseDoubleQuotedCSV output data: ", JSON.stringify(result));
       return result;
     };
   }
@@ -823,7 +823,7 @@ const Path = require('path');
       for (let i = 0; i < out.length; i++) {
         result.push(out[i].trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
       }
-      logDebugMessage(context, "parseMixedDoubleQuotedCSV output data: ", result);
+      logDebugMessage(context, "parseMixedDoubleQuotedCSV output data: ", JSON.stringify(result));
       return result;
     };
   }
@@ -834,7 +834,7 @@ const Path = require('path');
       logDebugMessage(context, "parseSingleQuotedCSV input data: ", JSON.stringify(d));
       context._lastSourceDataParseType = 'CSV';
       const result = regexSplitWithCapture(d, regex);
-      logDebugMessage(context, "parseSingleQuotedCSV output data: ", result);
+      logDebugMessage(context, "parseSingleQuotedCSV output data: ", JSON.stringify(result));
       return result;
     };
   }
@@ -845,7 +845,7 @@ const Path = require('path');
       logDebugMessage(context, "parseSpaceOrTabSeparatedValues input data: ", JSON.stringify(d));
       context._lastSourceDataParseType = 'CSV';
       const result = d.split(regex);
-      logDebugMessage(context, "parseSpaceOrTabSeparatedValues output data: ", result);
+      logDebugMessage(context, "parseSpaceOrTabSeparatedValues output data: ", JSON.stringify(result));
       return result;
     };
   }
