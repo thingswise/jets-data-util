@@ -685,7 +685,7 @@ const Path = require('path');
         msg += context.logHeading;
       }
       msg += message;
-      msg += data;
+      msg += JSON.stringify(data, null, 2);
       context.log(msg);
     }
   }
@@ -698,7 +698,7 @@ const Path = require('path');
       field = field.substring(1);
     }
     return function (d, context) {
-      logDebugMessage(context, "parseJSON input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseJSON input data: ", d);
       context._lastSourceDataParseType = 'JSON';
       if (isNoU(d)) {
         context.appendError('failed to parse JSON for empty input');
@@ -751,7 +751,7 @@ const Path = require('path');
   function parseCSV() {
     const regex = /[\ \t]*,[\ \t]*/g;
     return function (d, context) {
-      logDebugMessage(context, "parseCSV input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const result = d.split(regex);
       return result;
@@ -760,7 +760,7 @@ const Path = require('path');
 
   function parseStringArray() {
     return function (d, context) {
-      logDebugMessage(context, "parseStringArray input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseStringArray input data: ", d);
       return d;
     };
   }
@@ -768,7 +768,7 @@ const Path = require('path');
   function parseEscapedDoubleQuotedCSV() {
     const regex = /[\ \t]*"((?:[^"]|"")*)"[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
-      logDebugMessage(context, "parseEscapedDoubleQuotedCSV input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseEscapedDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const out = d.split(regex);
       const result = [];
@@ -785,7 +785,7 @@ const Path = require('path');
   function parseDoubleQuotedCSV() {
     const regex = /[\ \t]*"(.*?)"[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
-      logDebugMessage(context, "parseDoubleQuotedCSV input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const result = regexSplitWithCapture(d, regex);
       return result;
@@ -795,7 +795,7 @@ const Path = require('path');
   function parseMixedDoubleQuotedCSV0() {
     const regex = /[\ \t]*(?:"(.*?)"|([^",]*))[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
-      logDebugMessage(context, "parseDoubleQuotedCSV input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const result = regexSplitWithCapture1(d, regex);
       return result;
@@ -807,7 +807,7 @@ const Path = require('path');
     // splitting ' a ,b," a,bc,",d,"e-f" , "a""b"'
     // into: [ 'a', 'b', ' a,bc,', 'd', 'e-f', 'a"b' ]
     return function (d, context) {
-      logDebugMessage(context, "parseMixedDoubleQuotedCSV input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseMixedDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const out = d.split(regex);
       const result = [];
@@ -821,7 +821,7 @@ const Path = require('path');
   function parseSingleQuotedCSV() {
     const regex = /[\ \t]*'(.*?)'[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
-      logDebugMessage(context, "parseSingleQuotedCSV input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseSingleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const result = regexSplitWithCapture(d, regex);
       return result;
@@ -831,7 +831,7 @@ const Path = require('path');
   function parseSpaceOrTabSeparatedValues() {
     const regex = /[\ \t]/g;
     return function (d, context) {
-      logDebugMessage(context, "parseSpaceOrTabSeparatedValues input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseSpaceOrTabSeparatedValues input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const result = d.split(regex);
       return result;
@@ -842,7 +842,7 @@ const Path = require('path');
     if (isNoU(c) || !isString(c)) return '[TW.ERROR]: DataStage parse() configuration error: invalid character value, expecting a character';
     const regex = new RegExp(`[\\ \\t]*${c}[\\ \\t]*`, 'g');
     return function (d, context) {
-      logDebugMessage(context, "parseCharSeparatedValues input data: ", JSON.stringify(d));
+      logDebugMessage(context, "parseCharSeparatedValues input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const result = d.split(regex);
       logDebugMessage(context, "parseCharSeparatedValues input data: ", result);
