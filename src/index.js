@@ -1374,18 +1374,18 @@ const Path = require('path');
             if (streams.find(s => s.name === stream_name)) {
               throw Error(`stream with name '${stream_name}' is already defined`);
             }
-            if (protocol == 'HTTP') {
+            if (protocol === 'HTTP') {
               streams.push({
                 name: stream_name,
                 state: 'enabled',
                 protocol: 'HTTP',
                 method: 'POST',
-                keys,
+                keys: keys,
                 engine: engine_config,
                 entry: entry || stream_name
               });            
             } else
-            if (protocol == 'MQTT') {
+            if (protocol === 'MQTT') {
               streams.push({
                 name: stream_name,
                 state: 'enabled',
@@ -1393,12 +1393,12 @@ const Path = require('path');
                 method: 'PUBLISH',
                 "content-type": content_type,
                 batchCount: 1,
-                keys,
+                keys: keys,
                 engine: engine_config,
                 entry: entry || stream_name
               });
             } else
-            if (protocol == 'MQTTS') {
+            if (protocol === 'MQTTS') {
               streams.push({
                 name: stream_name,
                 state: 'enabled',
@@ -1406,7 +1406,7 @@ const Path = require('path');
                 method: 'PUBLISH',
                 "content-type": content_type,
                 batchCount: 1,
-                keys,
+                keys: keys,
                 engine: engine_config,
                 entry: entry || stream_name
               });

@@ -1,7 +1,9 @@
 const assert = require('chai').assert;
-const utils = require('../src/index').TW.util;
+// const utils = require('../src/index').TW.util;
+const utils = require(process.env.APP_PATH + 'data-util.opt').TW.util;
 
 describe('Test Jets Data Utils', () => {
+
     describe('isEmpty', () => {
         it('should return true for empty object', () => { assert.isTrue(utils.isEmpty({})) } );
         it('should return false for non-empty object', () => { assert.isFalse(utils.isEmpty({a: false})) });
@@ -72,6 +74,10 @@ describe('Test Jets Data Utils', () => {
             var numberFunc = utils.requiredNumber(null);
             assert.equal(numberFunc(0), 0);
         });
+        it('should work for timestamp', () => {
+            var numberFunc = utils.requiredNumber();
+            assert.equal(numberFunc(0), 0);
+        });
     });
 
     describe('processFieldSpecs', () => {
@@ -108,5 +114,12 @@ describe('Test Jets Data Utils', () => {
             }], "+0800", 5000, 5000, 'error-message-dump', 'JSON');
             assert.isNotEmpty(specs);
         });
+    });
+
+    describe('fieldSpecsForJSONFromXLSX', () => {
+       it('should produce field specs from xlsx', () => {
+           const fieldSpecs = utils.fieldSpecsForJSONFromXLSX('wpg-pump-data-specs.xlsx', '+0800', 5000, 5000, 'error-message-dump');
+           assert.equal(fieldSpecs.length, 109);
+       })
     });
 });
