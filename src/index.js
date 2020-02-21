@@ -616,6 +616,14 @@ const Path = require('path');
     return function (v) { return regex.test(v) ? v : null; };
   }
 
+  function tensor(v) {
+    return ("dimensions" in v) && Array.isArray(v["dimensions"]) && ("data" in v) && Array.isArray(v["data"]) ? v : null;
+  }
+
+  function bytes(v) {
+    return v["type"] === "base64" && (v["data"] === "" || v["data"]) ? v : null;
+  }
+
   function dropTuple(target, message, quiet) {
     return {
       action: 'drop-tuple', target: target || null, message: message || null, quiet: quiet || false
@@ -1010,7 +1018,7 @@ const Path = require('path');
 
   // === spec parser ===
   // based on IEC 61131-3
-  const dataTypes = ['SINT', 'INT', 'DINT', 'LINT', 'USINT', 'UINT', 'UDINT', 'ULINT', 'REAL', 'LREAL', 'STRING', 'ALNUM', 'MAC', 'TIMESTAMP'];
+  const dataTypes = ['SINT', 'INT', 'DINT', 'LINT', 'USINT', 'UINT', 'UDINT', 'ULINT', 'REAL', 'LREAL', 'STRING', 'ALNUM', 'MAC', 'TIMESTAMP', 'TENSOR', 'BYTES'];
   const policies = ['drop-tuple', 'drop-field', 'use-default'];
 
   function processFieldSpecs(specs, tzOffset, notBefore, notAfter, errorQueue, dataType) {
@@ -1278,6 +1286,13 @@ const Path = require('path');
           break;
         case 'REGEX':
           addFn(requiredPattern(sf.regex), f, i, `not matching pattern of ${sf.regex}`);
+          break;
+        case 'TENSOR':
+          addFn(tensor, f, i);
+          break;
+        case 'BYTES':
+          addFn(bytes, f, i);
+          break;
         default:
           if (dataType === 'binary') {
             throw (`[TW.ERROR]: invalid source field specs: empty type, ${sf.type} in entry ${i} expecting one of [${dataTypes.join(', ')}] for binary data`);
