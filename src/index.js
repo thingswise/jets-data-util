@@ -686,6 +686,18 @@ const Path = require('path');
     return result;
   }
 
+  function logDebugMessage(context, message, data) {
+    if (context.debug && context.log) {
+      let msg = "(debug:true)";
+      if (context.logHeading) {
+        msg += context.logHeading;
+      }
+      msg += message;
+      msg += JSON.stringify(data, null, 2);
+      context.log(msg);
+    }
+  }
+
   function parseJSON(field) {
     if (!isNoU(field) && !isString(field)) return `[TW.ERROR]: DataStage parseJSON() configuration error: invalid first arguement, ${field}, expecting a string`;
     let inPlace = false;
@@ -694,6 +706,7 @@ const Path = require('path');
       field = field.substring(1);
     }
     return function (d, context) {
+      logDebugMessage(context, "parseJSON input data: ", d);
       context._lastSourceDataParseType = 'JSON';
       if (isNoU(d)) {
         context.appendError('failed to parse JSON for empty input');
@@ -719,13 +732,11 @@ const Path = require('path');
           if (isString(d[field])) {
             return JSON.parse(d[field]);
           }
-
           return d[field];
         }
         if (isString(d)) {
           return JSON.parse(d);
         }
-
         return d;
 
 
@@ -748,13 +759,16 @@ const Path = require('path');
   function parseCSV() {
     const regex = /[\ \t]*,[\ \t]*/g;
     return function (d, context) {
+      logDebugMessage(context, "parseCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
-      return d.split(regex);
+      const result = d.split(regex);
+      return result;
     };
   }
 
   function parseStringArray() {
     return function (d, context) {
+      logDebugMessage(context, "parseStringArray input data: ", d);
       return d;
     };
   }
@@ -762,6 +776,7 @@ const Path = require('path');
   function parseEscapedDoubleQuotedCSV() {
     const regex = /[\ \t]*"((?:[^"]|"")*)"[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
+      logDebugMessage(context, "parseEscapedDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const out = d.split(regex);
       const result = [];
@@ -778,16 +793,20 @@ const Path = require('path');
   function parseDoubleQuotedCSV() {
     const regex = /[\ \t]*"(.*?)"[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
+      logDebugMessage(context, "parseDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
-      return regexSplitWithCapture(d, regex);
+      const result = regexSplitWithCapture(d, regex);
+      return result;
     };
   }
 
   function parseMixedDoubleQuotedCSV0() {
     const regex = /[\ \t]*(?:"(.*?)"|([^",]*))[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
+      logDebugMessage(context, "parseDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
-      return regexSplitWithCapture1(d, regex);
+      const result = regexSplitWithCapture1(d, regex);
+      return result;
     };
   }
 
@@ -796,6 +815,7 @@ const Path = require('path');
     // splitting ' a ,b," a,bc,",d,"e-f" , "a""b"'
     // into: [ 'a', 'b', ' a,bc,', 'd', 'e-f', 'a"b' ]
     return function (d, context) {
+      logDebugMessage(context, "parseMixedDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const out = d.split(regex);
       const result = [];
@@ -809,16 +829,20 @@ const Path = require('path');
   function parseSingleQuotedCSV() {
     const regex = /[\ \t]*'(.*?)'[\ \t]*,?[\ \t]*/g;
     return function (d, context) {
+      logDebugMessage(context, "parseSingleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
-      return regexSplitWithCapture(d, regex);
+      const result = regexSplitWithCapture(d, regex);
+      return result;
     };
   }
 
   function parseSpaceOrTabSeparatedValues() {
     const regex = /[\ \t]/g;
     return function (d, context) {
+      logDebugMessage(context, "parseSpaceOrTabSeparatedValues input data: ", d);
       context._lastSourceDataParseType = 'CSV';
-      return d.split(regex);
+      const result = d.split(regex);
+      return result;
     };
   }
 
@@ -826,8 +850,11 @@ const Path = require('path');
     if (isNoU(c) || !isString(c)) return '[TW.ERROR]: DataStage parse() configuration error: invalid character value, expecting a character';
     const regex = new RegExp(`[\\ \\t]*${c}[\\ \\t]*`, 'g');
     return function (d, context) {
+      logDebugMessage(context, "parseCharSeparatedValues input data: ", d);
       context._lastSourceDataParseType = 'CSV';
-      return d.split(regex);
+      const result = d.split(regex);
+      logDebugMessage(context, "parseCharSeparatedValues input data: ", result);
+      return result;
     };
   }
 
@@ -1389,18 +1416,18 @@ const Path = require('path');
             if (streams.find(s => s.name === stream_name)) {
               throw Error(`stream with name '${stream_name}' is already defined`);
             }
-            if (protocol == 'HTTP') {
+            if (protocol === 'HTTP') {
               streams.push({
                 name: stream_name,
                 state: 'enabled',
                 protocol: 'HTTP',
                 method: 'POST',
-                keys,
+                keys: keys,
                 engine: engine_config,
                 entry: entry || stream_name
               });            
             } else
-            if (protocol == 'MQTT') {
+            if (protocol === 'MQTT') {
               streams.push({
                 name: stream_name,
                 state: 'enabled',
@@ -1408,7 +1435,20 @@ const Path = require('path');
                 method: 'PUBLISH',
                 "content-type": content_type,
                 batchCount: 1,
-                keys,
+                keys: keys,
+                engine: engine_config,
+                entry: entry || stream_name
+              });
+            } else
+            if (protocol === 'MQTTS') {
+              streams.push({
+                name: stream_name,
+                state: 'enabled',
+                protocol: 'MQTTS',
+                method: 'PUBLISH',
+                "content-type": content_type,
+                batchCount: 1,
+                keys: keys,
                 engine: engine_config,
                 entry: entry || stream_name
               });
