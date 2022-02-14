@@ -1077,7 +1077,7 @@ const Path = require('path');
       if (!isEmpty(sf.upper) && isNaN(sf.upper)) {
         throw (`invalid source field specs: invalid field upper, ${sf.upper} in entry ${i} expecting empty or a number`);
       }
-      if (!isEmpty(sf.upper) && isNaN(sf.lower)) {
+      if (!isEmpty(sf.lower) && isNaN(sf.lower)) {
         throw (`invalid source field specs: invalid field lower, ${sf.lower} in entry ${i} expecting empty or a number`);
       }
 
