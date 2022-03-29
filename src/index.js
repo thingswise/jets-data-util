@@ -812,15 +812,20 @@ const Path = require('path');
 
   function parseMixedDoubleQuotedCSV() {
     const regex = /[\s \t]*\,[\s \t]*(?=(?:[^"\\]*(?:\\.|"(?:[^"\\]*\\.)*[^"\\]*"))*[^"]*$)/g;
-    // splitting ' a ,b," a,bc,",d,"e-f" , "a""b"'
-    // into: [ 'a', 'b', ' a,bc,', 'd', 'e-f', 'a"b' ]
+    // splitting ' a ,b," a,bc,",d,"e-f" , "a""b",, a
+    // into: [ 'a', 'b', ' a,bc,', 'd', 'e-f', 'a"b', null, a ]
     return function (d, context) {
       logDebugMessage(context, "parseMixedDoubleQuotedCSV input data: ", d);
       context._lastSourceDataParseType = 'CSV';
       const out = d.split(regex);
       const result = [];
       for (let i = 0; i < out.length; i++) {
-        result.push(out[i].trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+        if (out[i].length == 0) {
+          result.push(null);
+        } else {
+          const res = out[i].trim().replace(/^"|"$/g, '').replace(/""/g, '"');
+          result.push(res);
+        }
       }
       return result;
     };
