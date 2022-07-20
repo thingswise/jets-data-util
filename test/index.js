@@ -122,4 +122,12 @@ describe('Test Jets Data Utils', () => {
            assert.equal(fieldSpecs.length, 109);
        })
     });
+
+    describe('parseMixedDoubleQuotedCSV', () => {
+        it('should produce list from csv', () => {
+            const dtCtx = utils.digitalTwinContext([], {});
+            const result = utils.parseMixedDoubleQuotedCSV()(' a ,b,\" a,bc,\",d,\"e-f\" , \"a\"\"b\",, a, \"\"', dtCtx)
+            assert.deepEqual(result, ["a", "b", " a,bc,", "d", "e-f", "a\"b", null, "a", ""]);
+        })
+    });
 });
