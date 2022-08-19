@@ -200,6 +200,11 @@ const Path = require('path');
     return typeof o === 'object' && o !== null;
   }
 
+  function isJson(o) {
+    // ??? return isPrimitive(o) || isObject(o) || isArray(o);
+    return isObject(o);
+  }
+
   function isPrimitive(o) {
     return o === null ||
             typeof o === 'string' ||
@@ -624,6 +629,10 @@ const Path = require('path');
     return v["type"] === "base64" && (v["data"] === "" || v["data"]) ? v : null;
   }
 
+  function _json(v) {
+    return v["type"] === "json" && ("data" in v) && isJson(v["data"]) ? v : null;
+  }
+
   function dropTuple(target, message, quiet) {
     return {
       action: 'drop-tuple', target: target || null, message: message || null, quiet: quiet || false
@@ -1045,7 +1054,7 @@ const Path = require('path');
 
   // === spec parser ===
   // based on IEC 61131-3
-  const dataTypes = ['SINT', 'INT', 'DINT', 'LINT', 'USINT', 'UINT', 'UDINT', 'ULINT', 'REAL', 'LREAL', 'STRING', 'ALNUM', 'MAC', 'TIMESTAMP', 'TENSOR', 'BYTES'];
+  const dataTypes = ['SINT', 'INT', 'DINT', 'LINT', 'USINT', 'UINT', 'UDINT', 'ULINT', 'REAL', 'LREAL', 'STRING', 'ALNUM', 'MAC', 'TIMESTAMP', 'TENSOR', 'BYTES', 'JSON'];
   const policies = ['drop-tuple', 'drop-field', 'use-default'];
 
   function processFieldSpecs(specs, tzOffset, notBefore, notAfter, errorQueue, dataType) {
@@ -1320,6 +1329,9 @@ const Path = require('path');
         case 'BYTES':
           addFn(bytes, f, i);
           break;
+        case 'JSON':
+          addFn(_json, f, i);
+          break;
         default:
           if (dataType === 'binary') {
             throw (`[TW.ERROR]: invalid source field specs: empty type, ${sf.type} in entry ${i} expecting one of [${dataTypes.join(', ')}] for binary data`);
@@ -1529,6 +1541,7 @@ const Path = require('path');
     isUndefined,
     isEmpty,
     isTwError,
+    isJson,
     cloneObject,
     arrayToObjectByKey,
     mergeObjectTopInto,
