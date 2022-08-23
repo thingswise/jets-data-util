@@ -630,7 +630,7 @@ const Path = require('path');
   }
 
   function _json(v) {
-    return v["type"] === "json" && ("data" in v) && isJson(v["data"]) ? v : null;
+    return v["type"] === "json" && ((("data" in v) && isJson(v["data"])) || isJson(v)) ? v : null;
   }
 
   function dropTuple(target, message, quiet) {
