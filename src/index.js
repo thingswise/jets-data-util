@@ -93,12 +93,12 @@ const Path = require('path');
     // use a strict version
     const result = field.match(/([^"\\]*)/);
     if (result == null) {
-      throw ('invalid json field string');
+      throw ('invalid json field string "' + field + '"');
     }
     if (result[0] === field) {
       return { field, type: 'key' };
     }
-    throw ('invalid json field string');
+    throw ('invalid json field string "' + field + '"');
   }
 
   function extractBracketedContent(field) {
