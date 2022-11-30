@@ -621,7 +621,7 @@ const Path = require('path');
   }
 
   function tensor(v) {
-    return ("dimensions" in v) && Array.isArray(v["dimensions"]) && ("data" in v) && Array.isArray(v["data"]) ? v : null;
+    return isObject(v) && ("dimensions" in v) && Array.isArray(v["dimensions"]) && ("data" in v) && Array.isArray(v["data"]) ? v : null;
   }
 
   function bytes(v) {
