@@ -621,7 +621,8 @@ const Path = require('path');
   }
 
   function tensor(v) {
-    return isObject(v) && ("dimensions" in v) && Array.isArray(v["dimensions"]) && ("data" in v) && Array.isArray(v["data"]) ? v : null;
+    return (isObject(v) && ("dimensions" in v) && Array.isArray(v["dimensions"]) && ("data" in v) &&
+      Array.isArray(v["data"])) || Array.isArray(v) ? v : null;
   }
 
   function bytes(v) {
@@ -629,7 +630,7 @@ const Path = require('path');
   }
 
   function _json(v) {
-    return v["type"] === "json" && ((("data" in v) && isJson(v["data"])) || isJson(v)) ? v : null;
+    return (v["type"] === "json" && ("data" in v) && isJson(v["data"])) || isJson(v) ? v : null;
   }
 
   function dropTuple(target, message, quiet) {
@@ -1325,16 +1326,20 @@ const Path = require('path');
           addPolicy(sf, f, i, 'missing or invalid timestamp');
           break;
         case 'REGEX':
-          addFn(requiredPattern(sf.regex), f, i, `not matching pattern of ${sf.regex}`);
+          addFn(requiredPattern(sf.regex), f, i);
+          addPolicy(sf, f, i, `not matching pattern of '${sf.regex}'`);
           break;
         case 'TENSOR':
           addFn(tensor, f, i);
+          addPolicy(sf, f, i, 'not a tensor value');
           break;
         case 'BYTES':
           addFn(bytes, f, i);
+          addPolicy(sf, f, i, 'not a bytes value');
           break;
         case 'JSON':
           addFn(_json, f, i);
+          addPolicy(sf, f, i, 'not a json value');
           break;
         default:
           if (dataType === 'binary') {
