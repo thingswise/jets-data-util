@@ -201,7 +201,8 @@ const Path = require('path');
   }
 
   function isJson(o) {
-    return isPrimitive(o) || isObject(o) || isArray(o);
+    // only json as object is supported
+    return isObject(o);
   }
 
   function isPrimitive(o) {
