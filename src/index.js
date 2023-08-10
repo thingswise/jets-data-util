@@ -1215,6 +1215,11 @@ const Path = require('path');
       f.name = sf.name;
       f.handlers = [];
 
+      // add handlers defined in the source field spec
+      if (!isEmpty(sf.handlers) && Array.isArray(sf.handlers)) {
+        sf.handlers.forEach((h) => {addFn(h, f, i)});
+      }
+
       switch (sf.type) {
         case 'SINT':
         case 'INT':

@@ -114,6 +114,17 @@ describe('Test Jets Data Utils', () => {
             }], "+0800", 5000, 5000, 'error-message-dump', 'JSON');
             assert.isNotEmpty(specs);
         });
+        it('should append handlers from field specs', () => {
+            const specs = utils.processFieldSpecs([{
+                "name": "country",
+                "type": "STRING",
+                "jsonField": "country",
+                "handlers": [function (v) {
+                    return v;
+                }]
+            }], "+0800", 5000, 5000, 'error-message-dump', 'JSON');
+            assert.isNotEmpty(specs[0].handlers);
+        });
     });
 
     describe('fieldSpecsForJSONFromXLSX', () => {
